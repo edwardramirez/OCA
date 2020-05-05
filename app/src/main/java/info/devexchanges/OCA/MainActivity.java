@@ -51,9 +51,10 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    discoveredDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
+                    discoveredDevicesAdapter.add(device.getName() + " " + device.getAddress() + "\n signal strength" + rssi + "dBm");
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (discoveredDevicesAdapter.getCount() == 0) {
@@ -238,11 +239,11 @@ public class MainActivity extends AppCompatActivity {
         inputLayout = (TextInputLayout) findViewById(R.id.input_layout);
         View btnSend = findViewById(R.id.btn_send);
 
-        discover.setOnClickListener(new View.OnClickListener(){
+        discover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,15);
+                intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 15);
                 startActivity(intent);
             }
         });
