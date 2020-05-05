@@ -26,13 +26,13 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_OBJECT = 4;
-    public static final int MESSAGE_TOAST = 5;
-    public static final String DEVICE_OBJECT = "device_name";
-    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    public static final int messageStateChange = 1;
+    public static final int messageRead = 2;
+    public static final int messageWrite = 3;
+    public static final int messageDeviceObject = 4;
+    public static final int mToast = 5;
+    public static final String deviceObject = "device_name";
+    private static final int requestBluetoothEnable = 1;
     private TextView status;
     private Button connect;
     private Button discover;
@@ -64,10 +64,11 @@ public class MainActivity extends AppCompatActivity {
     };
     private Handler handler = new Handler(new Handler.Callback() {
 
+
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
-                case MESSAGE_STATE_CHANGE:
+                case messageStateChange:
                     switch (msg.arg1) {
                         case BluetoothChatController.STATE_CONNECTED:
                             setStatus("Connected to: " + connectingDevice.getName());
@@ -83,26 +84,26 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                     break;
-                case MESSAGE_WRITE:
+                case messageWrite:
                     byte[] writeBuf = (byte[]) msg.obj;
 
                     String writeMessage = new String(writeBuf);
                     chatMessages.add("Me: " + writeMessage);
                     chatAdapter.notifyDataSetChanged();
                     break;
-                case MESSAGE_READ:
+                case messageRead:
                     byte[] readBuf = (byte[]) msg.obj;
 
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
                     chatAdapter.notifyDataSetChanged();
                     break;
-                case MESSAGE_DEVICE_OBJECT:
-                    connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
+                case messageDeviceObject:
+                    connectingDevice = msg.getData().getParcelable(deviceObject);
                     Toast.makeText(getApplicationContext(), "Connected to " + connectingDevice.getName(),
                             Toast.LENGTH_SHORT).show();
                     break;
-                case MESSAGE_TOAST:
+                case mToast:
                     Toast.makeText(getApplicationContext(), msg.getData().getString("toast"),
                             Toast.LENGTH_SHORT).show();
                     break;
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPrinterPickDialog();
+                SignalReader();
             }
         });
 
@@ -140,7 +141,8 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(chatAdapter);
     }
 
-    private void showPrinterPickDialog() {
+    private void SignalReader() {
+
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.layout_bluetooth);
         dialog.setTitle("Bluetooth Devices");
@@ -261,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_ENABLE_BLUETOOTH:
+            case requestBluetoothEnable:
                 if (resultCode == Activity.RESULT_OK) {
                     bluetoothChatController = new BluetoothChatController(this, handler);
                 } else {
@@ -288,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
+            startActivityForResult(enableIntent, requestBluetoothEnable);
         } else {
             bluetoothChatController = new BluetoothChatController(this, handler);
         }

@@ -44,7 +44,7 @@ public class BluetoothChatController {
     private synchronized void setState(int state) {
         this.state = state;
 
-        handler.obtainMessage(MainActivity.MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+        handler.obtainMessage(MainActivity.messageStateChange, state, -1).sendToTarget();
     }
 
     // start service
@@ -114,9 +114,9 @@ public class BluetoothChatController {
         connectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_DEVICE_OBJECT);
+        Message msg = handler.obtainMessage(MainActivity.messageDeviceObject);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(MainActivity.DEVICE_OBJECT, device);
+        bundle.putParcelable(MainActivity.deviceObject, device);
         msg.setData(bundle);
         handler.sendMessage(msg);
 
@@ -153,7 +153,7 @@ public class BluetoothChatController {
     }
 
     private void connectionFailed() {
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(MainActivity.mToast);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "Unable to connect device");
         msg.setData(bundle);
@@ -164,7 +164,7 @@ public class BluetoothChatController {
     }
 
     private void connectionLost() {
-        Message msg = handler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = handler.obtainMessage(MainActivity.mToast);
         Bundle bundle = new Bundle();
         bundle.putString("toast", "Device connection was lost");
         msg.setData(bundle);
@@ -313,7 +313,7 @@ public class BluetoothChatController {
                     bytes = inputStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
-                    handler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1,
+                    handler.obtainMessage(MainActivity.messageRead, bytes, -1,
                             buffer).sendToTarget();
                 } catch (IOException e) {
                     connectionLost();
@@ -328,7 +328,7 @@ public class BluetoothChatController {
         public void write(byte[] buffer) {
             try {
                 outputStream.write(buffer);
-                handler.obtainMessage(MainActivity.MESSAGE_WRITE, -1, -1,
+                handler.obtainMessage(MainActivity.messageWrite, -1, -1,
                         buffer).sendToTarget();
             } catch (IOException e) {
             }
