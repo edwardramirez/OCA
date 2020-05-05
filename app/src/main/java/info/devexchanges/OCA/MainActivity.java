@@ -42,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> chatAdapter;
     private ArrayList<String> chatMessages;
     private BluetoothAdapter bluetoothAdapter;
-    private BluetoothChatController bluetoothChatController;
+    private MainModuleController bluetoothChatController;
     private BluetoothDevice connectingDevice;
     private ArrayAdapter<String> discoveredDevicesAdapter;
+
+
     private final BroadcastReceiver discoveryFinishReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    discoveredDevicesAdapter.add(device.getName() + " " + device.getAddress() + "\n signal strength" + rssi + "dBm");
+                    discoveredDevicesAdapter.add(device.getName() + " " + device.getAddress() + " signal strength" + rssi + "dBm");
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (discoveredDevicesAdapter.getCount() == 0) {
@@ -71,16 +73,16 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what) {
                 case messageStateChange:
                     switch (msg.arg1) {
-                        case BluetoothChatController.STATE_CONNECTED:
+                        case MainModuleController.STATE_CONNECTED:
                             setStatus("Connected to: " + connectingDevice.getName());
                             connect.setEnabled(false);
                             break;
-                        case BluetoothChatController.STATE_CONNECTING:
+                        case MainModuleController.STATE_CONNECTING:
                             setStatus("Connecting...");
                             connect.setEnabled(false);
                             break;
-                        case BluetoothChatController.STATE_LISTEN:
-                        case BluetoothChatController.STATE_NONE:
+                        case MainModuleController.STATE_LISTEN:
+                        case MainModuleController.STATE_NONE:
                             setStatus("Not connected");
                             break;
                     }
@@ -266,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case requestBluetoothEnable:
                 if (resultCode == Activity.RESULT_OK) {
-                    bluetoothChatController = new BluetoothChatController(this, handler);
+                    bluetoothChatController = new MainModuleController(this, handler);
                 } else {
                     Toast.makeText(this, "Bluetooth still disabled, turn off application!", Toast.LENGTH_SHORT).show();
                     finish();
@@ -275,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String message) {
-        if (bluetoothChatController.getState() != BluetoothChatController.STATE_CONNECTED) {
+        if (bluetoothChatController.getState() != MainModuleController.STATE_CONNECTED) {
             Toast.makeText(this, "Connection was lost!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -293,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, requestBluetoothEnable);
         } else {
-            bluetoothChatController = new BluetoothChatController(this, handler);
+            bluetoothChatController = new MainModuleController(this, handler);
         }
     }
 
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         if (bluetoothChatController != null) {
-            if (bluetoothChatController.getState() == BluetoothChatController.STATE_NONE) {
+            if (bluetoothChatController.getState() == MainModuleController.STATE_NONE) {
                 bluetoothChatController.start();
             }
         }

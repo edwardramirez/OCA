@@ -1,2 +1,2 @@
-# BluetoothChatAppAndroid
-Make a simple chat application through bluetooth in Android
+# OFFLINE CHAT APPLICATION
+CS3337 Project

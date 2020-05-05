@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class BluetoothChatController {
+public class MainModuleController {
     static final int STATE_NONE = 0;
     static final int STATE_LISTEN = 1;
     static final int STATE_CONNECTING = 2;
@@ -28,7 +28,7 @@ public class BluetoothChatController {
     private ReadWriteThread connectedThread;
     private int state;
 
-    public BluetoothChatController(Context context, Handler handler) {
+    public MainModuleController(Context context, Handler handler) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         state = STATE_NONE;
 
@@ -160,7 +160,7 @@ public class BluetoothChatController {
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        BluetoothChatController.this.start();
+        MainModuleController.this.start();
     }
 
     private void connectionLost() {
@@ -171,7 +171,7 @@ public class BluetoothChatController {
         handler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        BluetoothChatController.this.start();
+        MainModuleController.this.start();
     }
 
     // runs while listening for incoming connections
@@ -200,7 +200,7 @@ public class BluetoothChatController {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    synchronized (BluetoothChatController.this) {
+                    synchronized (MainModuleController.this) {
                         switch (state) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
@@ -265,7 +265,7 @@ public class BluetoothChatController {
             }
 
             // Reset the ConnectThread because we're done
-            synchronized (BluetoothChatController.this) {
+            synchronized (MainModuleController.this) {
                 connectThread = null;
             }
 
@@ -318,7 +318,7 @@ public class BluetoothChatController {
                 } catch (IOException e) {
                     connectionLost();
                     // Start the service over to restart listening mode
-                    BluetoothChatController.this.start();
+                    MainModuleController.this.start();
                     break;
                 }
             }
