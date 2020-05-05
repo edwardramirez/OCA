@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    discoveredDevicesAdapter.add(device.getName() + " " + device.getAddress() + " signal strength" + rssi + "dBm");
+                    discoveredDevicesAdapter.add(device.getName() + " " + device.getAddress() + "\nsignal strength" + rssi + "dBm");
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (discoveredDevicesAdapter.getCount() == 0) {
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+
     private Handler handler = new Handler(new Handler.Callback() {
 
 
