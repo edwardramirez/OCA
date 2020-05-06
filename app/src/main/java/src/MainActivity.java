@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.name:
+                        Toast.makeText(MainActivity.this, "Enter Username", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Public:
                      openPublicActivity();

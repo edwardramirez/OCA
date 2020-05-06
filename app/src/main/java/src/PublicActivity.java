@@ -258,7 +258,7 @@ public class PublicActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.name:
-                        Toast.makeText(PublicActivity.this, "My Account", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PublicActivity.this, "Enter Username", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Private:
                        openPrivateActivity();
