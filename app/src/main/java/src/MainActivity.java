@@ -1,6 +1,6 @@
-package info.devexchanges.OCA;
-
+package src;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,8 +11,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,9 +24,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Set;
+import info.devexchanges.OCA.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,10 +37,14 @@ public class MainActivity extends AppCompatActivity {
     public static final int mToast = 5;
     public static final String deviceObject = "device_name";
     private static final int requestBluetoothEnable = 1;
+    public static final String myName = "me";
     private TextView status;
     private Button connect;
     private Button discover;
+    private Button switchToPublic;
     private ListView listView;
+    private Toolbar toolbar;
+    private NavigationView navigationView;
     private Dialog dialog;
     private TextInputLayout inputLayout;
     private ArrayAdapter<String> chatAdapter;
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
 
                     String writeMessage = new String(writeBuf);
-                    chatMessages.add("Me: " + writeMessage);
+                    chatMessages.add(myName + ": " + writeMessage);
                     chatAdapter.notifyDataSetChanged();
                     break;
                 case messageRead:
@@ -241,7 +249,40 @@ public class MainActivity extends AppCompatActivity {
         discover = (Button) findViewById(R.id.btn_discover);
         listView = (ListView) findViewById(R.id.list);
         inputLayout = (TextInputLayout) findViewById(R.id.input_layout);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        navigationView = (NavigationView) findViewById(R.id.navigation);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.name:
+                        break;
+                    case R.id.Public:
+                     openPublicActivity();
+                        break;
+                    default:
+                        return true;
+                }
+                return true;
+
+            }
+        });
+
         View btnSend = findViewById(R.id.btn_send);
+
+        setSupportActionBar(toolbar);
+
+        switchToPublic = (Button) findViewById(R.id.switchToPublic);
+
+        switchToPublic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPublicActivity();
+            }
+        });
+
 
         discover.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,12 +299,19 @@ public class MainActivity extends AppCompatActivity {
                 if (inputLayout.getEditText().getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "Please input some texts", Toast.LENGTH_SHORT).show();
                 } else {
-                    //TODO: here
                     sendMessage(inputLayout.getEditText().getText().toString());
                     inputLayout.getEditText().setText("");
                 }
             }
         });
+    }
+
+
+
+    private void openPublicActivity() {
+
+        Intent intent = new Intent(this, PublicActivity.class);
+        startActivity(intent);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

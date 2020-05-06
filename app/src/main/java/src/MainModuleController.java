@@ -1,4 +1,4 @@
-package info.devexchanges.OCA;
+package src;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,7 +19,7 @@ public class MainModuleController {
     static final int STATE_LISTEN = 1;
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
-    private static final String APP_NAME = "BluetoothChatApp";
+    private static final String APP_NAME = "OFFLINE CHAT APPLICATION";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     private final BluetoothAdapter bluetoothAdapter;
     private final Handler handler;
@@ -248,8 +248,6 @@ public class MainModuleController {
 
         public void run() {
             setName("ConnectThread");
-
-            // Always cancel discovery because it will slow down a connection
             bluetoothAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket
