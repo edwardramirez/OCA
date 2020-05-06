@@ -5,7 +5,6 @@
     <item
         android:id="@+id/name"
         android:title="Name"
-
         />
     <item
         android:id="@+id/Public"
